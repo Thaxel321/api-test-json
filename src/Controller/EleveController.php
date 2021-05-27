@@ -15,7 +15,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Annotations as OA;
 
-class PersonneController extends AbstractController
+class EleveController extends AbstractController
 {
 
     /**
@@ -47,7 +47,7 @@ class PersonneController extends AbstractController
     {
         $eleves = $eleveRepository->findAll();
         return $this->json($eleves, 200, [], [
-            'groups' => 'test'
+            'groups' => 'eleve'
         ]);
     }
 
@@ -62,31 +62,31 @@ class PersonneController extends AbstractController
      *              required={"nom", "prenom"},
      *              @OA\Property (type="string", property="nom"),
      *              @OA\Property (type="string", property="prenom"),
-     *              @OA\Property (type="string", property="dateDeNaissance", format="date"),
+     *              @OA\Property ( type="string", property="dateDeNaissance",
+     *                             format="date")
      *          )
      *      )
-     *
      * )
      */
 
-    public function createPersonne(Request $request, SerializerInterface $serializer, EntityManagerInterface $em,
+    public function createEleve(Request $request, SerializerInterface $serializer, EntityManagerInterface $em,
                                    ValidatorInterface $validator)
     {
         $jsonRecu = $request->getContent();
         try {
 
-            $personne = $serializer->deserialize($jsonRecu, Eleve::class, 'json');
+            $eleve = $serializer->deserialize($jsonRecu, Eleve::class, 'json');
 
-            $errors = $validator->validate($personne);
+            $errors = $validator->validate($eleve);
 
             if (count($errors) > 0){
                 return $this->json($errors, 400);
             }
 
-            $em->persist($personne);
+            $em->persist($eleve);
             $em->flush();
 
-            return $this->json($personne, 201, [], ['groups' => 'eleve']);
+            return $this->json($eleve, 201, [], ['groups' => 'eleve']);
         } catch (NotEncodableValueException $e){
             return $this->json([
                 'status' => 400,
@@ -96,10 +96,10 @@ class PersonneController extends AbstractController
     }
 
     /**
-     * @Route ("/api_personne/edit/{id}", name="api_personne_edit", methods={"PUT"})
+     * @Route ("/api_eleve/edit/{id}", name="api_eleve_edit", methods={"PUT"})
      * * @OA\Put(
-     *     path="/api_personne/edit/{id}",
-     *     summary="Editer une eleve",
+     *     path="/api_eleve/edit/{id}",
+     *     summary="Editer un eleve",
      *     @OA\Parameter (
      *              name="id",
      *              in="path",
@@ -112,6 +112,7 @@ class PersonneController extends AbstractController
      *              required={"nom", "prenom"},
      *              @OA\Property (type="string", property="nom"),
      *              @OA\Property (type="string", property="prenom"),
+     *              @OA\Property (type="string", property="dateDeNaissance", format="date"),
      *          )
      *      ),
      *     @OA\Response (response="200", description="Succès"),
@@ -120,25 +121,25 @@ class PersonneController extends AbstractController
      * )
      */
 
-    public function editPersonne(int $id, Request $request, EntityManagerInterface $em){
+    public function editEleve(int $id, Request $request, EntityManagerInterface $em){
 
         $data = json_decode($request->getContent(), true);
         $request->request->replace(is_array($data) ? $data : array());
 
-        $personne = $em->getRepository(Personne::class)->find($id);
+        $eleve = $em->getRepository(Eleve::class)->find($id);
 
         try {
 
-            if ($data['nom'] == "" || $data['prenom'] == "") {
+            if ($data['nom'] == "" || $data['prenom'] == "" || $data['dateDeNaissance'] == "") {
                 return $this->json('Les champs ne doivent pas être vide', 400);
             }
 
-            $personne->setNom($data['nom']);
-            $personne->setPrenom($data['prenom']);
+            $eleve->setNom($data['nom']);
+            $eleve->setPrenom($data['prenom']);
 
             $em->flush();
 
-            return $this->json($personne, 201, [], ['groups' => 'eleve']);
+            return $this->json($eleve, 201, [], ['groups' => 'eleve']);
         } catch (NotEncodableValueException $e){
             return $this->json([
                 'status' => 400,
@@ -148,10 +149,10 @@ class PersonneController extends AbstractController
     }
 
     /**
-     * @Route ("/api_personne/remove/{id}", name="api_personne_remove", methods={"DELETE"})
+     * @Route ("/api_eleve/remove/{id}", name="api_eleve_remove", methods={"DELETE"})
      * * @OA\Delete(
-     *     path="/api_personne/remove/{id}",
-     *     summary="Supprimer une eleve",
+     *     path="/api_eleve/remove/{id}",
+     *     summary="Supprimer un eleve",
      *
      *     @OA\Response (response="200", description="Succès"),
      *     @OA\Response (response="400", description="Erreur requête"),
@@ -159,20 +160,19 @@ class PersonneController extends AbstractController
      * )
      */
 
-    public function supprimerPersonne(int $id, EntityManagerInterface $em,
-                                      ValidatorInterface $validator){
+    public function supprimerEleve(int $id, EntityManagerInterface $em){
 
         try{
-            $personne = $em->getRepository(Personne::class)->find($id);
+            $eleve = $em->getRepository(Eleve::class)->find($id);
 
-            if ($personne == null){
-                return $this->json("Aucune eleve ne possède l'id (" .$id.")" , 400);
+            if ($eleve == null){
+                return $this->json("Aucun élève ne possède l'id (" .$id.")" , 400);
             }
 
-            $em->remove($personne);
+            $em->remove($eleve);
             $em->flush();
 
-            return $this->json("La eleve possèdant l'id ".$id." a été supprimé",
+            return $this->json("L'élève possèdant l'id ".$id." a été supprimé",
                 200, [], []);
         } catch (NotEncodableValueException $e){
             return $this->json([
