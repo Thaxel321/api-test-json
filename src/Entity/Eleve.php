@@ -2,34 +2,42 @@
 
 namespace App\Entity;
 
-use App\Repository\PersonneRepository;
+use App\Repository\EleveRepository;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=PersonneRepository::class)
+ * @ORM\Entity(repositoryClass=EleveRepository::class)
  */
-class Personne
+class Eleve
 {
     /**
+     * @Groups("test")
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups ("personne")
+     *
      */
     private $id;
 
     /**
+     *
      * @ORM\Column(type="string", length=255)
-     * @Groups ("personne")
+     *
      */
     private $nom;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups ("personne")
+     *
      */
     private $prenom;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     *
+     */
+    private $dateDeNaissance;
 
     public function getId(): ?int
     {
@@ -56,6 +64,18 @@ class Personne
     public function setPrenom(string $prenom): self
     {
         $this->prenom = $prenom;
+
+        return $this;
+    }
+
+    public function getDateDeNaissance(): ?string
+    {
+        return $this->dateDeNaissance;
+    }
+
+    public function setDateDeNaissance(string $dateDeNaissance): self
+    {
+        $this->dateDeNaissance = $dateDeNaissance;
 
         return $this;
     }

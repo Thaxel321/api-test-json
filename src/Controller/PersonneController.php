@@ -2,8 +2,8 @@
 
 namespace App\Controller;
 
-use App\Entity\Personne;
-use App\Repository\PersonneRepository;
+use App\Entity\Eleve;
+use App\Repository\EleveRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,46 +23,46 @@ class PersonneController extends AbstractController
      */
 
     public function index(){
-        return $this->render('personne/index.html.twig');
+        return $this->render('eleve/index.html.twig');
     }
 
 
     /**
-     * @Route("/api_personne", name="api_personne", methods={"GET"})
+     * @Route("/api_eleve", name="api_eleve", methods={"GET"})
      *@OA\Get(
      *     path="/api_personne",
-     *     summary="Affiche toute les personnes"
+     *     summary="Affiche tout les élèves"
      * )
      * @OA\Response(
      *     response=200,
      *     description="Ok",
      *     @OA\JsonContent(
      *          type="array",
-     *          @OA\Items(ref=@Model(type=Personne::class, groups={"personne"}))
+     *          @OA\Items(ref=@Model(type=Eleve::class))
      *      )
      * )
      */
 
-    public function showPersonne(PersonneRepository $personneRepository): Response
+    public function showEleve(EleveRepository $eleveRepository): Response
     {
-
-        $personnes = $personneRepository->findAll();
-        return $this->json($personnes, 200, [], [
-            'groups' => 'personne'
+        $eleves = $eleveRepository->findAll();
+        return $this->json($eleves, 200, [], [
+            'groups' => 'test'
         ]);
     }
 
     /**
-     * @Route("/api_personne/new", name="api_personne_new", methods={"POST"})
+     * @Route("/api_eleve/new", name="api_eleve_new", methods={"POST"})
      * @OA\Post(
-     *     path="/api_personne/new",
-     *     summary="Ajoute une nouvelle personne",
+     *     path="/api_eleve/new",
+     *     summary="Ajoute un nouvel élève",
      *     @OA\RequestBody(
      *          required=true,
      *          @OA\JsonContent(
      *              required={"nom", "prenom"},
      *              @OA\Property (type="string", property="nom"),
      *              @OA\Property (type="string", property="prenom"),
+     *              @OA\Property (type="string", property="dateDeNaissance", format="date"),
      *          )
      *      )
      *
@@ -75,7 +75,7 @@ class PersonneController extends AbstractController
         $jsonRecu = $request->getContent();
         try {
 
-            $personne = $serializer->deserialize($jsonRecu, Personne::class, 'json');
+            $personne = $serializer->deserialize($jsonRecu, Eleve::class, 'json');
 
             $errors = $validator->validate($personne);
 
@@ -86,7 +86,7 @@ class PersonneController extends AbstractController
             $em->persist($personne);
             $em->flush();
 
-            return $this->json($personne, 201, [], ['groups' => 'personne']);
+            return $this->json($personne, 201, [], ['groups' => 'eleve']);
         } catch (NotEncodableValueException $e){
             return $this->json([
                 'status' => 400,
@@ -99,7 +99,7 @@ class PersonneController extends AbstractController
      * @Route ("/api_personne/edit/{id}", name="api_personne_edit", methods={"PUT"})
      * * @OA\Put(
      *     path="/api_personne/edit/{id}",
-     *     summary="Editer une personne",
+     *     summary="Editer une eleve",
      *     @OA\Parameter (
      *              name="id",
      *              in="path",
@@ -138,7 +138,7 @@ class PersonneController extends AbstractController
 
             $em->flush();
 
-            return $this->json($personne, 201, [], ['groups' => 'personne']);
+            return $this->json($personne, 201, [], ['groups' => 'eleve']);
         } catch (NotEncodableValueException $e){
             return $this->json([
                 'status' => 400,
@@ -151,7 +151,7 @@ class PersonneController extends AbstractController
      * @Route ("/api_personne/remove/{id}", name="api_personne_remove", methods={"DELETE"})
      * * @OA\Delete(
      *     path="/api_personne/remove/{id}",
-     *     summary="Supprimer une personne",
+     *     summary="Supprimer une eleve",
      *
      *     @OA\Response (response="200", description="Succès"),
      *     @OA\Response (response="400", description="Erreur requête"),
@@ -166,13 +166,13 @@ class PersonneController extends AbstractController
             $personne = $em->getRepository(Personne::class)->find($id);
 
             if ($personne == null){
-                return $this->json("Aucune personne ne possède l'id (" .$id.")" , 400);
+                return $this->json("Aucune eleve ne possède l'id (" .$id.")" , 400);
             }
 
             $em->remove($personne);
             $em->flush();
 
-            return $this->json("La personne possèdant l'id ".$id." a été supprimé",
+            return $this->json("La eleve possèdant l'id ".$id." a été supprimé",
                 200, [], []);
         } catch (NotEncodableValueException $e){
             return $this->json([
