@@ -26,20 +26,22 @@ class EleveController extends AbstractController
         return $this->render('eleve/index.html.twig');
     }
 
-
     /**
      * @Route("/api_eleve", name="api_eleve", methods={"GET"})
-     *@OA\Get(
-     *     path="/api_personne",
-     *     summary="Affiche tout les élèves"
-     * )
-     * @OA\Response(
-     *     response=200,
-     *     description="Ok",
-     *     @OA\JsonContent(
-     *          type="array",
-     *          @OA\Items(ref=@Model(type=Eleve::class))
-     *      )
+     * @OA\Get(
+     *     tags={"Eleve"},
+     *     path="/api_eleve",
+     *     summary="Affiche tout les élèves",
+     *     @OA\RequestBody(
+     *          required=true,
+     *          @OA\JsonContent(
+     *              type="array",
+     *              @OA\Items(ref=@Model(type=Eleve::class))
+     *          )
+     *      ),
+     *     @OA\Response (response="200", description="Succès"),
+     *     @OA\Response (response="400", description="Erreur requête"),
+     *     @OA\Response (response="500", description="Erreur Serveur"),
      * )
      */
 
@@ -54,6 +56,7 @@ class EleveController extends AbstractController
     /**
      * @Route("/api_eleve/new", name="api_eleve_new", methods={"POST"})
      * @OA\Post(
+     *     tags={"Eleve"},
      *     path="/api_eleve/new",
      *     summary="Ajoute un nouvel élève",
      *     @OA\RequestBody(
@@ -70,7 +73,7 @@ class EleveController extends AbstractController
      */
 
     public function createEleve(Request $request, SerializerInterface $serializer, EntityManagerInterface $em,
-                                   ValidatorInterface $validator)
+                                ValidatorInterface $validator)
     {
         $jsonRecu = $request->getContent();
         try {
@@ -95,9 +98,13 @@ class EleveController extends AbstractController
         }
     }
 
+
+
+
     /**
      * @Route ("/api_eleve/edit/{id}", name="api_eleve_edit", methods={"PUT"})
      * * @OA\Put(
+     *     tags={"Eleve"},
      *     path="/api_eleve/edit/{id}",
      *     summary="Editer un eleve",
      *     @OA\Parameter (
@@ -150,7 +157,8 @@ class EleveController extends AbstractController
 
     /**
      * @Route ("/api_eleve/remove/{id}", name="api_eleve_remove", methods={"DELETE"})
-     * * @OA\Delete(
+     * @OA\Delete(
+     *     tags={"Eleve"},
      *     path="/api_eleve/remove/{id}",
      *     summary="Supprimer un eleve",
      *
