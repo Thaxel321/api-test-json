@@ -35,7 +35,7 @@ class NoteController extends AbstractController
      * )
      *
      */
-    public function showNote(int $id ,Request $request, EntityManagerInterface $em){
+    public function addNote(int $id ,Request $request, EntityManagerInterface $em){
 
         $data = json_decode($request->getContent(), true);
         $request->request->replace(is_array($data) ? $data : array());
@@ -44,7 +44,7 @@ class NoteController extends AbstractController
 
         try {
 
-            if ($data['valeur'] >= 0 && $data['valeur'] <= 20) {
+            if ($data['valeur'] < 0 || $data['valeur'] > 20) {
                 return $this->json('La note doit être comprise entre 0 et 20', 400);
             }elseif ($data['matiere'] == ''){
                 return $this->json('Le champ matiere ne doit pas être vide', 400);
@@ -115,7 +115,7 @@ class NoteController extends AbstractController
      * )
      */
 
-    public function supprimerEleve(int $id, EntityManagerInterface $em){
+    public function supprimerNote(int $id, EntityManagerInterface $em){
 
             try{
                 $note = $em->getRepository(Notes::class)->find($id);

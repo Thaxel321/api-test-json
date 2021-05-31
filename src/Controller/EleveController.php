@@ -191,6 +191,29 @@ class EleveController extends AbstractController
 
     }
 
+    /**
+     * @Route("/api/eleve/{id}/note", name="moyenneEleve", methods={"GET"})
+     * @OA\Get(
+     *     tags={"Eleve"},
+     *     summary="Moyenne élève",
+     *     @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          @OA\Schema(type="integer"),
+     *      )
+     * )
+     */
+
+    public function moyenneEleve(int $id, EntityManagerInterface $em){
+
+        $eleve = $em->getRepository(Eleves::class)->find($id);
+
+        $notes = $eleve->getNotes();
+
+
+        return $this->json($notes, 201, [], ['groups' => 'eleve']);
+    }
+
 
 }
 
