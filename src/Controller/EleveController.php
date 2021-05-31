@@ -2,8 +2,8 @@
 
 namespace App\Controller;
 
-use App\Entity\Eleve;
-use App\Repository\EleveRepository;
+use App\Entity\Eleves;
+use App\Repository\ElevesRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -36,7 +36,7 @@ class EleveController extends AbstractController
      *          required=true,
      *          @OA\JsonContent(
      *              type="array",
-     *              @OA\Items(ref=@Model(type=Eleve::class))
+     *              @OA\Items(ref=@Model(type=Eleves::class))
      *          )
      *      ),
      *     @OA\Response (response="200", description="Succès"),
@@ -45,7 +45,7 @@ class EleveController extends AbstractController
      * )
      */
 
-    public function showEleve(EleveRepository $eleveRepository): Response
+    public function showEleve(ElevesRepository $eleveRepository): Response
     {
         $eleves = $eleveRepository->findAll();
         return $this->json($eleves, 200, [], [
@@ -78,7 +78,7 @@ class EleveController extends AbstractController
         $jsonRecu = $request->getContent();
         try {
 
-            $eleve = $serializer->deserialize($jsonRecu, Eleve::class, 'json');
+            $eleve = $serializer->deserialize($jsonRecu, Eleves::class, 'json');
 
             $errors = $validator->validate($eleve);
 
@@ -133,7 +133,7 @@ class EleveController extends AbstractController
         $data = json_decode($request->getContent(), true);
         $request->request->replace(is_array($data) ? $data : array());
 
-        $eleve = $em->getRepository(Eleve::class)->find($id);
+        $eleve = $em->getRepository(Eleves::class)->find($id);
 
         try {
 
@@ -171,7 +171,7 @@ class EleveController extends AbstractController
     public function supprimerEleve(int $id, EntityManagerInterface $em){
 
         try{
-            $eleve = $em->getRepository(Eleve::class)->find($id);
+            $eleve = $em->getRepository(Eleves::class)->find($id);
 
             if ($eleve == null){
                 return $this->json("Aucun élève ne possède l'id (" .$id.")" , 400);
@@ -191,4 +191,6 @@ class EleveController extends AbstractController
 
     }
 
+
 }
+

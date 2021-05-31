@@ -2,50 +2,46 @@
 
 namespace App\Entity;
 
-use App\Repository\EleveRepository;
+use App\Repository\ElevesRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=EleveRepository::class)
+ * @ORM\Entity(repositoryClass=ElevesRepository::class)
  */
-class Eleve
+class Eleves
 {
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups ("eleve")
-     *
+     * @Groups("eleve")
      */
     private $id;
 
     /**
-     *
      * @ORM\Column(type="string", length=255)
-     * @Groups ("eleve")
-     *
+     * @Groups("eleve")
      */
     private $nom;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups ("eleve")
-     *
+     * @Groups("eleve")
      */
     private $prenom;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups ("eleve")
-     *
+     * @Groups("eleve")
      */
     private $dateDeNaissance;
 
     /**
-     * @ORM\OneToMany(targetEntity=Note::class, mappedBy="eleve", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=Notes::class, mappedBy="eleve", orphanRemoval=true)
+     * @Groups("eleve")
      */
     private $notes;
 
@@ -96,14 +92,14 @@ class Eleve
     }
 
     /**
-     * @return Collection|Note[]
+     * @return Collection|Notes[]
      */
     public function getNotes(): Collection
     {
         return $this->notes;
     }
 
-    public function addNote(Note $note): self
+    public function addNote(Notes $note): self
     {
         if (!$this->notes->contains($note)) {
             $this->notes[] = $note;
@@ -113,7 +109,7 @@ class Eleve
         return $this;
     }
 
-    public function removeNote(Note $note): self
+    public function removeNote(Notes $note): self
     {
         if ($this->notes->removeElement($note)) {
             // set the owning side to null (unless already changed)
