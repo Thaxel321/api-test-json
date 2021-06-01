@@ -53,7 +53,7 @@ class NoteController extends AbstractController
             $note = new Notes();
             $note->setMatiere($data['matiere'])
                  ->setValeur($data['valeur'])
-                 ->setEleve($eleve);
+                 ->setEleves($eleve);
 
             $em->persist($note);
             $em->flush();

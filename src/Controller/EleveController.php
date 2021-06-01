@@ -3,8 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\Eleves;
+use App\Entity\Notes;
 use App\Repository\ElevesRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use phpDocumentor\Reflection\Type;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,10 +29,10 @@ class EleveController extends AbstractController
     }
 
     /**
-     * @Route("/api_eleve", name="api_eleve", methods={"GET"})
+     * @Route("/api/eleve", name="api_eleve", methods={"GET"})
      * @OA\Get(
      *     tags={"Eleve"},
-     *     path="/api_eleve",
+     *     path="/api/eleve",
      *     summary="Affiche tout les élèves",
      *     @OA\RequestBody(
      *          required=true,
@@ -54,10 +56,10 @@ class EleveController extends AbstractController
     }
 
     /**
-     * @Route("/api_eleve/new", name="api_eleve_new", methods={"POST"})
+     * @Route("/api/eleve/new", name="api_eleve_new", methods={"POST"})
      * @OA\Post(
      *     tags={"Eleve"},
-     *     path="/api_eleve/new",
+     *     path="/api/eleve/new",
      *     summary="Ajoute un nouvel élève",
      *     @OA\RequestBody(
      *          required=true,
@@ -102,10 +104,10 @@ class EleveController extends AbstractController
 
 
     /**
-     * @Route ("/api_eleve/edit/{id}", name="api_eleve_edit", methods={"PUT"})
+     * @Route ("/api/eleve/edit/{id}", name="api_eleve_edit", methods={"PUT"})
      * * @OA\Put(
      *     tags={"Eleve"},
-     *     path="/api_eleve/edit/{id}",
+     *     path="/api/eleve/edit/{id}",
      *     summary="Editer un eleve",
      *     @OA\Parameter (
      *              name="id",
@@ -144,6 +146,7 @@ class EleveController extends AbstractController
             $eleve->setNom($data['nom']);
             $eleve->setPrenom($data['prenom']);
 
+
             $em->flush();
 
             return $this->json($eleve, 201, [], ['groups' => 'eleve']);
@@ -156,7 +159,7 @@ class EleveController extends AbstractController
     }
 
     /**
-     * @Route ("/api_eleve/remove/{id}", name="api_eleve_remove", methods={"DELETE"})
+     * @Route ("/api/eleve/remove/{id}", name="api_eleve_remove", methods={"DELETE"})
      * @OA\Delete(
      *     tags={"Eleve"},
      *     path="/api_eleve/remove/{id}",
@@ -206,14 +209,18 @@ class EleveController extends AbstractController
 
     public function moyenneEleve(int $id, EntityManagerInterface $em){
 
-        $eleve = $em->getRepository(Eleves::class)->find($id);
+        $notes = $em->getRepository(Notes::class)
+            ->findBy(array('eleves' => $id));
 
-        $notes = $eleve->getNotes();
+        $total = 0;
+        foreach ($notes as $note){
 
+            echo $note->getValeur(). "\n";
 
-        return $this->json($notes, 201, [], ['groups' => 'eleve']);
+        }
+
+        return $this->json('', 201, [], ['groups' => 'eleve']);
     }
-
 
 }
 

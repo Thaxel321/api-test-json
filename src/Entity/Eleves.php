@@ -40,7 +40,7 @@ class Eleves
     private $dateDeNaissance;
 
     /**
-     * @ORM\OneToMany(targetEntity=Notes::class, mappedBy="eleve", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=Notes::class, mappedBy="eleves", orphanRemoval=true)
      * @Groups("eleve")
      */
     private $notes;

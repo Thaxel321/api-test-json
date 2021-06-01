@@ -33,7 +33,7 @@ class Notes
      * @ORM\ManyToOne(targetEntity=Eleves::class, inversedBy="notes")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $eleve;
+    private $eleves;
 
     public function getId(): ?int
     {
@@ -52,26 +52,26 @@ class Notes
         return $this;
     }
 
-    public function getValeur(): ?string
+    public function getValeur(): ?int
     {
         return $this->valeur;
     }
 
-    public function setValeur(string $valeur): self
+    public function setValeur(int $valeur): self
     {
         $this->valeur = $valeur;
 
         return $this;
     }
 
-    public function getEleve(): ?Eleves
+    public function getEleves(): ?Eleves
     {
-        return $this->eleve;
+        return $this->eleves;
     }
 
-    public function setEleve(?Eleves $eleve): self
+    public function setEleves(?Eleves $eleves): self
     {
-        $this->eleve = $eleve;
+        $this->eleves = $eleves;
 
         return $this;
     }
