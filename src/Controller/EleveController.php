@@ -3,10 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Eleves;
-use App\Entity\Notes;
 use App\Repository\ElevesRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use phpDocumentor\Reflection\Type;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,7 +12,6 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Annotations as OA;
 
 class EleveController extends AbstractController
@@ -34,13 +31,6 @@ class EleveController extends AbstractController
      *     tags={"Eleve"},
      *     path="/api/eleve",
      *     summary="Affiche tout les élèves",
-     *     @OA\RequestBody(
-     *          required=true,
-     *          @OA\JsonContent(
-     *              type="array",
-     *              @OA\Items(ref=@Model(type=Eleves::class))
-     *          )
-     *      ),
      *     @OA\Response (response="200", description="Succès"),
      *     @OA\Response (response="400", description="Erreur requête"),
      *     @OA\Response (response="500", description="Erreur Serveur"),
@@ -162,7 +152,7 @@ class EleveController extends AbstractController
      * @Route ("/api/eleve/remove/{id}", name="api_eleve_remove", methods={"DELETE"})
      * @OA\Delete(
      *     tags={"Eleve"},
-     *     path="/api_eleve/remove/{id}",
+     *     path="/api/eleve/remove/{id}",
      *     summary="Supprimer un eleve",
      *
      *     @OA\Response (response="200", description="Succès"),
@@ -195,7 +185,7 @@ class EleveController extends AbstractController
     }
 
     /**
-     * @Route("/api/eleve/{id}/note", name="moyenneEleve", methods={"GET"})
+     * @Route("/api/eleve/{id}/note", name="averageEleve", methods={"GET"})
      * @OA\Get(
      *     tags={"Eleve"},
      *     summary="Moyenne élève",
@@ -207,19 +197,9 @@ class EleveController extends AbstractController
      * )
      */
 
-    public function moyenneEleve(int $id, EntityManagerInterface $em){
+    public function averageEleve(Eleves $eleve){
 
-        $notes = $em->getRepository(Notes::class)
-            ->findBy(array('eleves' => $id));
-
-        $total = 0;
-        foreach ($notes as $note){
-
-            echo $note->getValeur(). "\n";
-
-        }
-
-        return $this->json('', 201, [], ['groups' => 'eleve']);
+        return $this->json(['average' => $eleve->getAverageNote()], 201, [], ['groups' => 'eleve']);
     }
 
 }

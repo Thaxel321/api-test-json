@@ -40,6 +40,7 @@ class Eleves
     private $dateDeNaissance;
 
     /**
+     * @var $notes ArrayCollection
      * @ORM\OneToMany(targetEntity=Notes::class, mappedBy="eleves", orphanRemoval=true)
      * @Groups("eleve")
      */
@@ -103,18 +104,28 @@ class Eleves
     {
         if (!$this->notes->contains($note)) {
             $this->notes[] = $note;
-            $note->setEleve($this);
+            $note->setEleves($this);
         }
 
         return $this;
+    }
+
+    public function getAverageNote(): float
+    {
+        $sum = 0;
+        /** @var Notes $note */
+        foreach ($this->notes as $note){
+            $sum += $note->getValeur();
+        }
+        return round(($sum / count($this->notes)), 2);
     }
 
     public function removeNote(Notes $note): self
     {
         if ($this->notes->removeElement($note)) {
             // set the owning side to null (unless already changed)
-            if ($note->getEleve() === $this) {
-                $note->setEleve(null);
+            if ($note->getEleves() === $this) {
+                $note->setEleves(null);
             }
         }
 

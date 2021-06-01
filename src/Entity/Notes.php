@@ -75,4 +75,5 @@ class Notes
 
         return $this;
     }
+
 }

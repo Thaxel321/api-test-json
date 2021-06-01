@@ -7,6 +7,7 @@ use App\Entity\Notes;
 use App\Repository\NotesRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use OpenApi\Annotations as OA;
@@ -18,9 +19,11 @@ class NoteController extends AbstractController
      * @Route ("/api/note/new/{id}", name="note", methods={"POST"})
      * @OA\Post (
      *     tags={"Note"},
+     *     summary="Ajouter une note",
      *      @OA\Parameter (
      *              name="id",
      *              in="path",
+     *              description="L'id est celui de l'élève correspondant",
      *              @OA\Schema (type="integer"),
      *          ),
      *     @OA\RequestBody(
@@ -35,7 +38,7 @@ class NoteController extends AbstractController
      * )
      *
      */
-    public function addNote(int $id ,Request $request, EntityManagerInterface $em){
+    public function addNote(int $id , Request $request, EntityManagerInterface $em){
 
         $data = json_decode($request->getContent(), true);
         $request->request->replace(is_array($data) ? $data : array());
@@ -71,6 +74,7 @@ class NoteController extends AbstractController
      * @Route("/api/note/edit/{id}", name="editNote", methods={"PUT"})
      * @OA\Put(
      *     tags={"Note"},
+     *     summary="Modifier une note",
      *     @OA\Parameter(
      *         name="id",
      *         in = "path",
@@ -107,6 +111,7 @@ class NoteController extends AbstractController
      * @Route("/api/note/delete/{id}", name="deleteNote", methods={"DELETE"})
      * @OA\Delete(
      *     tags={"Note"},
+     *     summary="Supprimer une note",
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -136,5 +141,27 @@ class NoteController extends AbstractController
                 ], 400);
             }
 
+    }
+
+    /**
+     * @Route("/api/note/average_all_note", name="average_all_note", methods={"GET"})
+     * @OA\Get(
+     *     tags={"Note"},
+     *     summary="Moyenne classe",
+     *)
+     */
+
+    public function averageAllNote(NotesRepository $repository)
+    {
+        $notes = $repository->findAll();
+        $sum = 0;
+
+        foreach ($notes as $note){
+            $sum += $note->getValeur();
         }
+
+        $averageNote=  round(($sum / count($notes)), 2);
+        return $this->json(['average' => $averageNote], 201, [], ['groups' => 'eleve']);
+    }
+
 }
