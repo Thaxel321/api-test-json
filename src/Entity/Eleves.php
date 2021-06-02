@@ -7,9 +7,11 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
+use OpenApi\Annotations as OA;
 
 /**
  * @ORM\Entity(repositoryClass=ElevesRepository::class)
+ * @OA\Schema()
  */
 class Eleves
 {
@@ -18,24 +20,28 @@ class Eleves
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @Groups("eleve")
+     * @OA\Property(type="integer", nullable=false)
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups("eleve")
+     * @OA\Property(type="string", nullable=false)
      */
     private $nom;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups("eleve")
+     * @OA\Property(type="string", nullable=false)
      */
     private $prenom;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups("eleve")
+     * @OA\Property(type="string",format="date", nullable=false)
      */
     private $dateDeNaissance;
 

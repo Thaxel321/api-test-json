@@ -16,7 +16,7 @@ use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 class NoteController extends AbstractController
 {
     /**
-     * @Route ("/api/note/new/{id}", name="note", methods={"POST"})
+     * @Route ("/api/note/{id}", name="note", methods={"POST"})
      * @OA\Post (
      *     tags={"Note"},
      *     summary="Ajouter une note",
@@ -31,9 +31,23 @@ class NoteController extends AbstractController
      *
      *          @OA\JsonContent(
      *              required={"nom", "prenom"},
+     *              @OA\Property (type="integer", property="id"),
      *              @OA\Property (type="string", property="matiere"),
-     *              @OA\Property (type="integer", property="valeur")
+     *              @OA\Property (type="integer", property="valeur", minimum="0", maximum="20")
      *          )
+     *      ),
+     *     @OA\Response(
+     *          response="200",
+     *          description="La note a été ajouter",
+     *          @OA\JsonContent(
+     *              @OA\Property (type="integer", property="id"),
+     *              @OA\Property (type="string", property="matiere"),
+     *              @OA\Property (type="integer", property="valeur", minimum="0", maximum="20")
+     *          ),
+     *      ),
+     *     @OA\Response(
+     *          response="400",
+     *          description="Ajout de la note impossible les champs sont invalides"
      *      )
      * )
      *
@@ -71,13 +85,14 @@ class NoteController extends AbstractController
     }
 
     /**
-     * @Route("/api/note/edit/{id}", name="editNote", methods={"PUT"})
+     * @Route("/api/note/{id}", name="editNote", methods={"PUT"})
      * @OA\Put(
      *     tags={"Note"},
      *     summary="Modifier une note",
      *     @OA\Parameter(
      *         name="id",
      *         in = "path",
+     *          description="L'id de la note correspondant",
      *         @OA\Schema(type="integer"),
      *      ),
      *      @OA\RequestBody(
@@ -85,9 +100,23 @@ class NoteController extends AbstractController
      *          @OA\JsonContent(
      *              required={"valeur, matiere"},
      *              @OA\Property (type="string", property="matiere"),
-     *              @OA\Property (type="integer", property="valeur")
+     *              @OA\Property (type="integer", property="valeur", minimum="0", maximum="20")
      *          )
+     *      ),
+     *      @OA\Response(
+     *          response="200",
+     *          description="La note a été modifié avec succès",
+     *          @OA\JsonContent(
+     *              @OA\Property (type="integer", property="id"),
+     *              @OA\Property (type="string", property="matiere"),
+     *              @OA\Property (type="integer", property="valeur", minimum="0", maximum="20")
+     *          ),
+     *      ),
+     *      @OA\Response(
+     *          response="400",
+     *          description="Modification de la note impossible les champs sont invalides"
      *      )
+     *
      * )
      */
 
@@ -108,7 +137,7 @@ class NoteController extends AbstractController
     }
 
     /**
-     * @Route("/api/note/delete/{id}", name="deleteNote", methods={"DELETE"})
+     * @Route("/api/note", name="deleteNote", methods={"DELETE"})
      * @OA\Delete(
      *     tags={"Note"},
      *     summary="Supprimer une note",
@@ -116,6 +145,14 @@ class NoteController extends AbstractController
      *         name="id",
      *         in="path",
      *         @OA\Schema(type="integer")
+     *      ),
+     *      @OA\Response(
+     *          response="200",
+     *          description="La note a été supprimé avec succès"
+     *      ),
+     *      @OA\Response(
+     *          response="400",
+     *          description="Id inexistant"
      *      )
      * )
      */
@@ -144,10 +181,21 @@ class NoteController extends AbstractController
     }
 
     /**
-     * @Route("/api/note/average_all_note", name="average_all_note", methods={"GET"})
+     * @Route("/api/note", name="average_all_note", methods={"GET"})
      * @OA\Get(
      *     tags={"Note"},
-     *     summary="Moyenne classe",
+     *     summary="Moyenne de la classe",
+     *     @OA\Response(
+     *          response="200",
+     *          description="La moyenne a été calculer avec succès",
+     *          @OA\JsonContent(
+     *              @OA\Property(type="integer", property="moyenne de la classe"),
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response="400",
+     *          description="Aucune note a été trouver"
+     *      )
      *)
      */
 

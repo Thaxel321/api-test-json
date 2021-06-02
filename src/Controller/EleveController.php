@@ -31,9 +31,25 @@ class EleveController extends AbstractController
      *     tags={"Eleve"},
      *     path="/api/eleve",
      *     summary="Affiche tout les élèves",
-     *     @OA\Response (response="200", description="Succès"),
-     *     @OA\Response (response="400", description="Erreur requête"),
-     *     @OA\Response (response="500", description="Erreur Serveur"),
+     *     @OA\Response(
+     *          response="200",
+     *          description="Affichage de la liste de tout les élèves réussit",
+     *          @OA\JsonContent(
+     *              type="array",
+     *              @OA\Items(
+     *                  @OA\Property(type="integer", property="id"),
+     *                  @OA\Property (type="string", property="nom"),
+     *                  @OA\Property (type="string", property="prenom"),
+     *                  @OA\Property ( type="string", property="dateDeNaissance",
+     *                             format="date"),
+     *              )
+     *          ),
+     *
+     *      ),
+     *      @OA\Response(
+     *          response="400",
+     *          description="Modification de la note impossible les champs sont invalides"
+     *      )
      * )
      */
 
@@ -46,10 +62,10 @@ class EleveController extends AbstractController
     }
 
     /**
-     * @Route("/api/eleve/new", name="api_eleve_new", methods={"POST"})
+     * @Route("/api/eleve", name="api_eleve_new", methods={"POST"})
      * @OA\Post(
      *     tags={"Eleve"},
-     *     path="/api/eleve/new",
+     *     path="/api/eleve",
      *     summary="Ajoute un nouvel élève",
      *     @OA\RequestBody(
      *          required=true,
@@ -60,6 +76,21 @@ class EleveController extends AbstractController
      *              @OA\Property ( type="string", property="dateDeNaissance",
      *                             format="date")
      *          )
+     *      ),
+     *      @OA\Response(
+     *          response="200",
+     *          description="Ajout de l'élève réussit",
+     *          @OA\JsonContent(
+     *              @OA\Property (type="integer", property="id"),
+     *              @OA\Property (type="string", property="nom"),
+     *              @OA\Property (type="string", property="prenom"),
+     *              @OA\Property ( type="string", property="dateDeNaissance",
+     *                             format="date")
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response="400",
+     *          description="Le(s) champ(s) ne sont pas valide"
      *      )
      * )
      */
@@ -94,19 +125,30 @@ class EleveController extends AbstractController
 
 
     /**
-     * @Route ("/api/eleve/edit/{id}", name="api_eleve_edit", methods={"PUT"})
+     * @Route ("/api/eleve", name="api_eleve_edit", methods={"PUT"})
      * * @OA\Put(
      *     tags={"Eleve"},
-     *     path="/api/eleve/edit/{id}",
+     *     path="/api/eleve",
      *     summary="Editer un eleve",
      *     @OA\Parameter (
      *              name="id",
      *              in="path",
+     *              description="L'id le l'élève correspondant",
      *              @OA\Schema (type="integer"),
      *          ),
      *     @OA\RequestBody(
      *          required=true,
-     *
+     *          @OA\JsonContent(
+     *              required={"nom", "prenom"},
+     *              @OA\Property (type="integer", property="id"),
+     *              @OA\Property (type="string", property="nom"),
+     *              @OA\Property (type="string", property="prenom"),
+     *              @OA\Property (type="string", property="dateDeNaissance", format="date"),
+     *          )
+     *      ),
+     *     @OA\Response(
+     *          response="200",
+     *          description="Modification de l'élève réussit",
      *          @OA\JsonContent(
      *              required={"nom", "prenom"},
      *              @OA\Property (type="string", property="nom"),
@@ -114,9 +156,10 @@ class EleveController extends AbstractController
      *              @OA\Property (type="string", property="dateDeNaissance", format="date"),
      *          )
      *      ),
-     *     @OA\Response (response="200", description="Succès"),
-     *     @OA\Response (response="400", description="Erreur requête"),
-     *     @OA\Response (response="500", description="Erreur Serveur"),
+     *      @OA\Response(
+     *          response="400",
+     *          description="Le(s) champ(s) ne sont pas valide"
+     *      )
      * )
      */
 
@@ -149,15 +192,14 @@ class EleveController extends AbstractController
     }
 
     /**
-     * @Route ("/api/eleve/remove/{id}", name="api_eleve_remove", methods={"DELETE"})
+     * @Route ("/api/eleve", name="api_eleve_remove", methods={"DELETE"})
      * @OA\Delete(
      *     tags={"Eleve"},
-     *     path="/api/eleve/remove/{id}",
+     *     path="/api/eleve",
      *     summary="Supprimer un eleve",
-     *
-     *     @OA\Response (response="200", description="Succès"),
-     *     @OA\Response (response="400", description="Erreur requête"),
-     *     @OA\Response (response="500", description="Erreur Serveur"),
+     *     @OA\Response (response="200", description="La suppression de l'élève
+     *                      a été faite avec succès"),
+     *     @OA\Response (response="400", description="Id inexistant")
      * )
      */
 
@@ -185,15 +227,24 @@ class EleveController extends AbstractController
     }
 
     /**
-     * @Route("/api/eleve/{id}/note", name="averageEleve", methods={"GET"})
+     * @Route("/api/eleve/{id}", name="averageEleve", methods={"GET"})
      * @OA\Get(
      *     tags={"Eleve"},
-     *     summary="Moyenne élève",
+     *     summary="Moyenne d'un élève",
      *     @OA\Parameter(
      *          name="id",
      *          in="path",
+     *          description="L'id de l'élève correspondant",
      *          @OA\Schema(type="integer"),
-     *      )
+     *      ),
+     *      @OA\Response (
+     *          response="200",
+     *          description="Affichage de la moyenne de l'élève avec succès",
+     *          @OA\JsonContent(
+     *              @OA\Property(type="integer", property="Moyenne de l'Eleve"),
+     *          ),
+     *      ),
+     *     @OA\Response (response="400", description="Id inexistant")
      * )
      */
 

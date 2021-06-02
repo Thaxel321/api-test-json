@@ -5,9 +5,11 @@ namespace App\Entity;
 use App\Repository\NotesRepository;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
+use OpenApi\Annotations as OA;
 
 /**
  * @ORM\Entity(repositoryClass=NotesRepository::class)
+ * @OA\Schema()
  */
 class Notes
 {
@@ -15,17 +17,22 @@ class Notes
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * Groups("eleve")
+     * @OA\Property(type="integer", nullable=false)
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * Groups("eleve")
+     * @OA\Property(type="string", nullable=false)
      */
     private $matiere;
 
     /**
      * @ORM\Column(type="integer", length=255)
      * @Groups("eleve")
+     * @OA\Property(type="integer", nullable=false)
      */
     private $valeur;
 
