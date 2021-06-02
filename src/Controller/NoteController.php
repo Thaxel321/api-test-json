@@ -59,11 +59,11 @@ class NoteController extends AbstractController
 
         $eleve = $em->getRepository(Eleves::class)->find($id);
 
-        try {
 
-            if ($data['valeur'] < 0 || $data['valeur'] > 20) {
+            if ($data['valeur'] < 0 || $data['valeur'] > 20)
+            {
                 return $this->json('La note doit être comprise entre 0 et 20', 400);
-            }elseif ($data['matiere'] == ''){
+            } elseif ($data['matiere'] == ''){
                 return $this->json('Le champ matiere ne doit pas être vide', 400);
             }
 
@@ -76,12 +76,7 @@ class NoteController extends AbstractController
             $em->flush();
 
             return $this->json($eleve, 201, [], ['groups' => 'eleve']);
-        } catch (NotEncodableValueException $e){
-            return $this->json([
-                'status' => 400,
-                'message' => $e->getMessage()
-            ], 400);
-        }
+
     }
 
     /**
@@ -159,24 +154,17 @@ class NoteController extends AbstractController
 
     public function supprimerNote(int $id, EntityManagerInterface $em){
 
-            try{
-                $note = $em->getRepository(Notes::class)->find($id);
+        $note = $em->getRepository(Notes::class)->find($id);
 
-                if ($note == null){
-                    return $this->json("Aucune notes ne possède l'id (" .$id.")" , 400);
-                }
+        if ($note == null){
+            return $this->json("Aucune notes ne possède l'id (" .$id.")" , 400);
+        }
 
-                $em->remove($note);
-                $em->flush();
+        $em->remove($note);
+        $em->flush();
 
-                return $this->json("La note possèdant l' ".$id." a été supprimé",
-                    200, [], []);
-            } catch (NotEncodableValueException $e){
-                return $this->json([
-                    'status' => 400,
-                    'message' => $e->getMessage()
-                ], 400);
-            }
+        return $this->json("La note possèdant l' ".$id." a été supprimé",
+            200, [], []);
 
     }
 

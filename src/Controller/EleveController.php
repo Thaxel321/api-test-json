@@ -99,7 +99,6 @@ class EleveController extends AbstractController
                                 ValidatorInterface $validator)
     {
         $jsonRecu = $request->getContent();
-        try {
 
             $eleve = $serializer->deserialize($jsonRecu, Eleves::class, 'json');
 
@@ -113,12 +112,7 @@ class EleveController extends AbstractController
             $em->flush();
 
             return $this->json($eleve, 201, [], ['groups' => 'eleve']);
-        } catch (NotEncodableValueException $e){
-            return $this->json([
-                'status' => 400,
-                'message' => $e->getMessage()
-            ], 400);
-        }
+
     }
 
 
@@ -140,7 +134,6 @@ class EleveController extends AbstractController
      *          required=true,
      *          @OA\JsonContent(
      *              required={"nom", "prenom"},
-     *              @OA\Property (type="integer", property="id"),
      *              @OA\Property (type="string", property="nom"),
      *              @OA\Property (type="string", property="prenom"),
      *              @OA\Property (type="string", property="dateDeNaissance", format="date"),
@@ -151,6 +144,7 @@ class EleveController extends AbstractController
      *          description="Modification de l'élève réussit",
      *          @OA\JsonContent(
      *              required={"nom", "prenom"},
+     *              @OA\Property (type="integer", property="id"),
      *              @OA\Property (type="string", property="nom"),
      *              @OA\Property (type="string", property="prenom"),
      *              @OA\Property (type="string", property="dateDeNaissance", format="date"),
@@ -170,25 +164,19 @@ class EleveController extends AbstractController
 
         $eleve = $em->getRepository(Eleves::class)->find($id);
 
-        try {
 
-            if ($data['nom'] == "" || $data['prenom'] == "" || $data['dateDeNaissance'] == "") {
+            if ($data['nom'] == "" || $data['prenom'] == "" || $data['dateDeNaissance'] == "")
+            {
                 return $this->json('Les champs ne doivent pas être vide', 400);
             }
 
             $eleve->setNom($data['nom']);
             $eleve->setPrenom($data['prenom']);
 
-
             $em->flush();
 
             return $this->json($eleve, 201, [], ['groups' => 'eleve']);
-        } catch (NotEncodableValueException $e){
-            return $this->json([
-                'status' => 400,
-                'message' => $e->getMessage()
-            ], 400);
-        }
+
     }
 
     /**
@@ -205,10 +193,10 @@ class EleveController extends AbstractController
 
     public function supprimerEleve(int $id, EntityManagerInterface $em){
 
-        try{
             $eleve = $em->getRepository(Eleves::class)->find($id);
 
-            if ($eleve == null){
+            if ($eleve == null)
+            {
                 return $this->json("Aucun élève ne possède l'id (" .$id.")" , 400);
             }
 
@@ -217,12 +205,6 @@ class EleveController extends AbstractController
 
             return $this->json("L'élève possèdant l'id ".$id." a été supprimé",
                 200, [], []);
-        } catch (NotEncodableValueException $e){
-            return $this->json([
-                'status' => 400,
-                'message' => $e->getMessage()
-            ], 400);
-        }
 
     }
 
