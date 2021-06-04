@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use OpenApi\Annotations as OA;
 
@@ -34,14 +35,9 @@ class EleveController extends AbstractController
      *          description="Affichage de la liste de tout les élèves réussit",
      *          @OA\JsonContent(
      *              type="array",
-     *              @OA\Items(
-     *                  @OA\Property(type="integer", property="id"),
-     *                  @OA\Property (type="string", property="nom"),
-     *                  @OA\Property (type="string", property="prenom"),
-     *                  @OA\Property ( type="string", property="dateDeNaissance",
-     *                             format="date"),
-     *              )
-     *          ),
+     *              @OA\Items(ref=@Model(type=Eleves::class, groups={"eleve"}))
+     *
+     *          )
      *
      *      ),
      *      @OA\Response(
@@ -173,12 +169,20 @@ class EleveController extends AbstractController
     }
 
     /**
-     * @Route ("/api/eleve", name="api_eleve_remove", methods={"DELETE"})
+     * @Route ("/api/eleve/{id}", name="api_eleve_remove", methods={"DELETE"})
      * @OA\Delete(
      *     tags={"Eleve"},
      *     summary="Supprimer un eleve",
+     *     @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          description="L'id de l'élève correspondant",
+     *          @OA\Property(type="integer"),
+     *      ),
      *     @OA\Response (response="200", description="La suppression de l'élève
-     *                      a été faite avec succès"),
+     *                      a été faite avec succès",
+     *
+     *      ),
      *     @OA\Response (response="400", description="Id inexistant")
      * )
      */

@@ -130,7 +130,7 @@ class NoteController extends AbstractController
     }
 
     /**
-     * @Route("/api/note", name="deleteNote", methods={"DELETE"})
+     * @Route("/api/note/{id}", name="deleteNote", methods={"DELETE"})
      * @OA\Delete(
      *     tags={"Note"},
      *     summary="Supprimer une note",

@@ -14,6 +14,7 @@ use OpenApi\Annotations as OA;
 class Notes
 {
     /**
+     * @var $id integer
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
@@ -23,6 +24,7 @@ class Notes
     private $id;
 
     /**
+     * @var $matiere string
      * @ORM\Column(type="string", length=255)
      * Groups("eleve")
      * @OA\Property(type="string", nullable=false)
@@ -30,6 +32,7 @@ class Notes
     private $matiere;
 
     /**
+     * @var $valeur integer
      * @ORM\Column(type="integer", length=255)
      * @Groups("eleve")
      * @OA\Property(type="integer", nullable=false)

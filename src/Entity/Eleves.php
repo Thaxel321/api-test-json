@@ -16,6 +16,7 @@ use OpenApi\Annotations as OA;
 class Eleves
 {
     /**
+     * @var $id integer
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
@@ -25,6 +26,7 @@ class Eleves
     private $id;
 
     /**
+     * @var $nom string
      * @ORM\Column(type="string", length=255)
      * @Groups("eleve")
      * @OA\Property(type="string", nullable=false)
@@ -32,6 +34,7 @@ class Eleves
     private $nom;
 
     /**
+     * @var $prenom string
      * @ORM\Column(type="string", length=255)
      * @Groups("eleve")
      * @OA\Property(type="string", nullable=false)
@@ -39,6 +42,7 @@ class Eleves
     private $prenom;
 
     /**
+     * @var $dateDeNaissance  string
      * @ORM\Column(type="string", length=255)
      * @Groups("eleve")
      * @OA\Property(type="string",format="date", nullable=false)
