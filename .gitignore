@@ -30,7 +30,6 @@
 !bin/console
 !bin/symfony_requirements
 /vendor/
-!/vendor/autoload.php
 
 # Assets and user uploads
 /web/bundles/
