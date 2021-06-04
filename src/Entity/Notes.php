@@ -18,7 +18,7 @@ class Notes
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * Groups("eleve")
+     * @Groups("eleve")
      * @OA\Property(type="integer", nullable=false)
      */
     private $id;
@@ -26,7 +26,7 @@ class Notes
     /**
      * @var $matiere string
      * @ORM\Column(type="string", length=255)
-     * Groups("eleve")
+     * @Groups("eleve")
      * @OA\Property(type="string", nullable=false)
      */
     private $matiere;
