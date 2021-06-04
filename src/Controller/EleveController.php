@@ -9,7 +9,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use OpenApi\Annotations as OA;
@@ -29,7 +28,6 @@ class EleveController extends AbstractController
      * @Route("/api/eleve", name="api_eleve", methods={"GET"})
      * @OA\Get(
      *     tags={"Eleve"},
-     *     path="/api/eleve",
      *     summary="Affiche tout les élèves",
      *     @OA\Response(
      *          response="200",
@@ -65,7 +63,6 @@ class EleveController extends AbstractController
      * @Route("/api/eleve", name="api_eleve_new", methods={"POST"})
      * @OA\Post(
      *     tags={"Eleve"},
-     *     path="/api/eleve",
      *     summary="Ajoute un nouvel élève",
      *     @OA\RequestBody(
      *          required=true,
@@ -115,14 +112,10 @@ class EleveController extends AbstractController
 
     }
 
-
-
-
     /**
      * @Route ("/api/eleve", name="api_eleve_edit", methods={"PUT"})
      * * @OA\Put(
      *     tags={"Eleve"},
-     *     path="/api/eleve",
      *     summary="Editer un eleve",
      *     @OA\Parameter (
      *              name="id",
@@ -183,7 +176,6 @@ class EleveController extends AbstractController
      * @Route ("/api/eleve", name="api_eleve_remove", methods={"DELETE"})
      * @OA\Delete(
      *     tags={"Eleve"},
-     *     path="/api/eleve",
      *     summary="Supprimer un eleve",
      *     @OA\Response (response="200", description="La suppression de l'élève
      *                      a été faite avec succès"),
