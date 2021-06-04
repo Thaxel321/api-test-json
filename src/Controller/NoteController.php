@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Annotations as OA;
 
 class NoteController extends AbstractController
@@ -26,21 +27,17 @@ class NoteController extends AbstractController
      *          ),
      *     @OA\RequestBody(
      *          required=true,
-     *
      *          @OA\JsonContent(
-     *              required={"nom", "prenom"},
-     *              @OA\Property (type="integer", property="id"),
-     *              @OA\Property (type="string", property="matiere"),
-     *              @OA\Property (type="integer", property="valeur", minimum="0", maximum="20")
+     *              type="array",
+     *              @OA\Items(ref=@Model(type=Notes::class, groups={"eleve"})),
      *          )
      *      ),
      *     @OA\Response(
      *          response="200",
      *          description="La note a été ajouter",
      *          @OA\JsonContent(
-     *              @OA\Property (type="integer", property="id"),
-     *              @OA\Property (type="string", property="matiere"),
-     *              @OA\Property (type="integer", property="valeur", minimum="0", maximum="20")
+     *              type="array",
+     *              @OA\Items(ref=@Model(type=Notes::class, groups={"eleve"})),
      *          ),
      *      ),
      *     @OA\Response(
@@ -100,9 +97,8 @@ class NoteController extends AbstractController
      *          response="200",
      *          description="La note a été modifié avec succès",
      *          @OA\JsonContent(
-     *              @OA\Property (type="integer", property="id"),
-     *              @OA\Property (type="string", property="matiere"),
-     *              @OA\Property (type="integer", property="valeur", minimum="0", maximum="20")
+     *              type="array",
+     *              @OA\Items(ref=@Model(type=Notes::class, groups={"eleve"})),
      *          ),
      *      ),
      *      @OA\Response(

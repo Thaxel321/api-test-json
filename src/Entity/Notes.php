@@ -9,7 +9,6 @@ use OpenApi\Annotations as OA;
 
 /**
  * @ORM\Entity(repositoryClass=NotesRepository::class)
- * @OA\Schema()
  */
 class Notes
 {
@@ -35,7 +34,7 @@ class Notes
      * @var $valeur integer
      * @ORM\Column(type="integer", length=255)
      * @Groups("eleve")
-     * @OA\Property(type="integer", nullable=false)
+     * @OA\Property(type="integer", nullable=false, minimum="0", maximum="20")
      */
     private $valeur;
 

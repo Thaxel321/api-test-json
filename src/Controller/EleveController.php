@@ -36,9 +36,7 @@ class EleveController extends AbstractController
      *          @OA\JsonContent(
      *              type="array",
      *              @OA\Items(ref=@Model(type=Eleves::class, groups={"eleve"}))
-     *
      *          )
-     *
      *      ),
      *      @OA\Response(
      *          response="400",
@@ -109,7 +107,7 @@ class EleveController extends AbstractController
     }
 
     /**
-     * @Route ("/api/eleve", name="api_eleve_edit", methods={"PUT"})
+     * @Route ("/api/eleve/{id}", name="api_eleve_edit", methods={"PUT"})
      * * @OA\Put(
      *     tags={"Eleve"},
      *     summary="Editer un eleve",

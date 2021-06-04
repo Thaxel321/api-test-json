@@ -11,7 +11,6 @@ use OpenApi\Annotations as OA;
 
 /**
  * @ORM\Entity(repositoryClass=ElevesRepository::class)
- * @OA\Schema()
  */
 class Eleves
 {
