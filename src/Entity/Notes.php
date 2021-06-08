@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\NotesRepository;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 use OpenApi\Annotations as OA;
 
@@ -17,6 +18,7 @@ class Notes
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Assert\Type("integer")
      * @Groups({"readAllEleve", "readNote"})
      * @OA\Property(type="integer", nullable=false)
      */
@@ -25,6 +27,7 @@ class Notes
     /**
      * @var $matiere string
      * @ORM\Column(type="string", length=255)
+     * @Assert\Type("string")
      * @Groups({"readAllEleve", "createNote", "readNote"})
      * @OA\Property(type="string", nullable=false)
      */
@@ -33,6 +36,7 @@ class Notes
     /**
      * @var $valeur integer
      * @ORM\Column(type="integer", length=255)
+     * @Assert\Type("integer")
      * @Groups({"readAllEleve", "createNote", "readNote"})
      * @OA\Property(type="integer", nullable=false, minimum="0", maximum="20")
      */

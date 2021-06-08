@@ -179,7 +179,7 @@ class EleveController extends AbstractController
      * )
      */
 
-    private function averageEleve(Eleves $eleve)
+    public function averageEleve(Eleves $eleve)
     {
 
         return $this->json(['average' => $eleve->getAverageNote()], 201, [], ['groups' => 'readEleve']);

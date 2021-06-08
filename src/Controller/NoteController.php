@@ -171,7 +171,7 @@ class NoteController extends AbstractController
         return $this->json(['average' => $averageNote], 201, [], ['groups' => 'eleve']);
     }
 
-    private function saveNote($note, $data)
+    private function saveNote(Notes $note, $data)
     {
 
         $requestBody = $data;
@@ -180,7 +180,7 @@ class NoteController extends AbstractController
 
         $form->submit($requestBody);
 
-        if ($form->isSubmitted()) #error with $form->isValid()
+        if ($form->isSubmitted() && $form->isValid()) #error with $form->isValid()
         {
             $em = $this->getDoctrine()->getManager();
 
@@ -193,7 +193,6 @@ class NoteController extends AbstractController
             return $this->json('erreur', 201, []);
 
         }
-
     }
 
 }

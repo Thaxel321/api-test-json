@@ -6,6 +6,7 @@ use App\Repository\ElevesRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 use OpenApi\Annotations as OA;
 
@@ -19,6 +20,7 @@ class Eleves
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Assert\Type("integer")
      * @Groups({"readAllEleve", "readEleve"})
      * @OA\Property(type="integer", nullable=false)
      */
@@ -27,6 +29,7 @@ class Eleves
     /**
      * @var $nom string
      * @ORM\Column(type="string", length=255)
+     * @Assert\Type("string")
      * @Groups({"readAllEleve", "readEleve", "createEleve"})
      * @OA\Property(type="string", nullable=false)
      */
@@ -35,6 +38,7 @@ class Eleves
     /**
      * @var $prenom string
      * @ORM\Column(type="string", length=255)
+     * @Assert\Type("string")
      * @Groups({"readAllEleve", "readEleve", "createEleve"})
      * @OA\Property(type="string", nullable=false)
      */
@@ -43,6 +47,7 @@ class Eleves
     /**
      * @var $dateDeNaissance  string
      * @ORM\Column(type="string", length=255)
+     * @Assert\Type("string")
      * @Groups({"readAllEleve", "readEleve", "createEleve"})
      * @OA\Property(type="string",format="date", nullable=false)
      */

@@ -18,5 +18,11 @@ class ElevesType extends AbstractType
         ;
     }
 
-
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults([
+            'data_class' => Eleves::class,
+            'csrf_protection' => false,
+        ]);
+    }
 }
