@@ -17,7 +17,7 @@ class Notes
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("eleve")
+     * @Groups({"readAllEleve", "readNote"})
      * @OA\Property(type="integer", nullable=false)
      */
     private $id;
@@ -25,7 +25,7 @@ class Notes
     /**
      * @var $matiere string
      * @ORM\Column(type="string", length=255)
-     * @Groups("eleve")
+     * @Groups({"readAllEleve", "createNote", "readNote"})
      * @OA\Property(type="string", nullable=false)
      */
     private $matiere;
@@ -33,7 +33,7 @@ class Notes
     /**
      * @var $valeur integer
      * @ORM\Column(type="integer", length=255)
-     * @Groups("eleve")
+     * @Groups({"readAllEleve", "createNote", "readNote"})
      * @OA\Property(type="integer", nullable=false, minimum="0", maximum="20")
      */
     private $valeur;

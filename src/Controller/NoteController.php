@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Entity\Eleves;
 use App\Entity\Notes;
+use App\Form\ElevesType;
+use App\Form\NotesType;
 use App\Repository\NotesRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,25 +13,21 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Annotations as OA;
+use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 
 class NoteController extends AbstractController
 {
     /**
-     * @Route ("/api/note/{id}", name="note", methods={"POST"})
+     * @Route ("/api/note", name="note", methods={"POST"})
      * @OA\Post (
      *     tags={"Note"},
      *     summary="Ajouter une note",
-     *      @OA\Parameter (
-     *              name="id",
-     *              in="path",
-     *              description="L'id est celui de l'élève correspondant",
-     *              @OA\Schema (type="integer"),
-     *          ),
      *     @OA\RequestBody(
      *          required=true,
      *          @OA\JsonContent(
-     *              type="array",
-     *              @OA\Items(ref=@Model(type=Notes::class, groups={"eleve"})),
+     *              @OA\Property(type="integer", property="eleves"),
+     *              @OA\Property(type="string", property="matiere"),
+     *              @OA\Property(type="integer", property="valeur"),
      *          )
      *      ),
      *     @OA\Response(
@@ -37,7 +35,7 @@ class NoteController extends AbstractController
      *          description="La note a été ajouter",
      *          @OA\JsonContent(
      *              type="array",
-     *              @OA\Items(ref=@Model(type=Notes::class, groups={"eleve"})),
+     *              @OA\Items(ref="#/components/schemas/Notes")
      *          ),
      *      ),
      *     @OA\Response(
@@ -47,30 +45,14 @@ class NoteController extends AbstractController
      * )
      *
      */
-    public function addNote(int $id , Request $request, EntityManagerInterface $em){
+    public function addNote(Request $request)
+    {
 
-        $data = json_decode($request->getContent(), true);
-        $request->request->replace(is_array($data) ? $data : array());
+        $note = new Notes();
 
-        $eleve = $em->getRepository(Eleves::class)->find($id);
+        $data=json_decode($request->getContent(), true);
 
-
-            if ($data['valeur'] < 0 || $data['valeur'] > 20)
-            {
-                return $this->json('La note doit être comprise entre 0 et 20', 400);
-            } elseif ($data['matiere'] == ''){
-                return $this->json('Le champ matiere ne doit pas être vide', 400);
-            }
-
-            $note = new Notes();
-            $note->setMatiere($data['matiere'])
-                 ->setValeur($data['valeur'])
-                 ->setEleves($eleve);
-
-            $em->persist($note);
-            $em->flush();
-
-            return $this->json($eleve, 201, [], ['groups' => 'eleve']);
+        return $this->saveNote($note, $data);
 
     }
 
@@ -79,18 +61,13 @@ class NoteController extends AbstractController
      * @OA\Put(
      *     tags={"Note"},
      *     summary="Modifier une note",
-     *     @OA\Parameter(
-     *         name="id",
-     *         in = "path",
-     *          description="L'id de la note correspondant",
-     *         @OA\Schema(type="integer"),
-     *      ),
      *      @OA\RequestBody(
      *          required=true,
      *          @OA\JsonContent(
-     *              required={"valeur, matiere"},
-     *              @OA\Property (type="string", property="matiere"),
-     *              @OA\Property (type="integer", property="valeur", minimum="0", maximum="20")
+     *              @OA\Property(type="integer", property="eleves"),
+     *              @OA\Property(type="string", property="matiere"),
+     *              @OA\Property(type="integer", property="valeur"),
+     *
      *          )
      *      ),
      *      @OA\Response(
@@ -98,7 +75,7 @@ class NoteController extends AbstractController
      *          description="La note a été modifié avec succès",
      *          @OA\JsonContent(
      *              type="array",
-     *              @OA\Items(ref=@Model(type=Notes::class, groups={"eleve"})),
+     *              @OA\Items(ref="#/components/schemas/Notes")
      *          ),
      *      ),
      *      @OA\Response(
@@ -109,19 +86,19 @@ class NoteController extends AbstractController
      * )
      */
 
-    public function editNote(int $id, Request $request, EntityManagerInterface $em){
+    public function editNote(int $id, Request $request)
+    {
 
-         $data = json_decode($request->getContent(), true);
-         $request->request->replace(is_array($data) ? $data : array());
+        $em = $this->getDoctrine()->getManager();
+        $note = $em->getRepository(Notes::class)->find($id);
 
-         $note = $em->getRepository(Notes::class)->find($id);
+        if (!$note) {
+            throw new ResourceNotFoundException("Resource $id not found");
+        }
 
-         $note->setValeur($data['valeur'])
-              ->setMatiere($data['matiere']);
+        $data=json_decode($request->getContent(), true);
 
-         $em->flush();
-
-         return $this->json($note, 201, [], ['groups' => 'eleve']);
+        return $this->saveNote($note, $data);
 
     }
 
@@ -192,6 +169,31 @@ class NoteController extends AbstractController
 
         $averageNote=  round(($sum / count($notes)), 2);
         return $this->json(['average' => $averageNote], 201, [], ['groups' => 'eleve']);
+    }
+
+    private function saveNote($note, $data)
+    {
+
+        $requestBody = $data;
+
+        $form = $this->createForm(NotesType::class, $note);
+
+        $form->submit($requestBody);
+
+        if ($form->isSubmitted()) #error with $form->isValid()
+        {
+            $em = $this->getDoctrine()->getManager();
+
+            $em->persist($note);
+            $em->flush();
+
+            return $this->json($note, 201, [], ['groups' => 'readNote']);
+
+        } else{
+            return $this->json('erreur', 201, []);
+
+        }
+
     }
 
 }

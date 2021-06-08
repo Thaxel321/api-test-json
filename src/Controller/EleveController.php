@@ -3,16 +3,14 @@
 namespace App\Controller;
 
 use App\Entity\Eleves;
-use App\Repository\ElevesRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Form\ElevesType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\SerializerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use OpenApi\Annotations as OA;
+use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 
 class EleveController extends AbstractController
 {
@@ -35,7 +33,7 @@ class EleveController extends AbstractController
      *          description="Affichage de la liste de tout les élèves réussit",
      *          @OA\JsonContent(
      *              type="array",
-     *              @OA\Items(ref=@Model(type=Eleves::class, groups={"eleve"}))
+     *              @OA\Items(ref=@Model(type=Eleves::class, groups={"readAllEleve"}))
      *          )
      *      ),
      *      @OA\Response(
@@ -45,11 +43,12 @@ class EleveController extends AbstractController
      * )
      */
 
-    public function showEleve(ElevesRepository $eleveRepository): Response
+    public function showEleve(): Response
     {
-        $eleves = $eleveRepository->findAll();
+        $em = $this->getDoctrine()->getManager();
+        $eleves = $em->getRepository(Eleves::class)->findAll();
         return $this->json($eleves, 200, [], [
-            'groups' => 'eleve'
+            'groups' => 'readAllEleve'
         ]);
     }
 
@@ -61,22 +60,17 @@ class EleveController extends AbstractController
      *     @OA\RequestBody(
      *          required=true,
      *          @OA\JsonContent(
-     *              required={"nom", "prenom"},
-     *              @OA\Property (type="string", property="nom"),
-     *              @OA\Property (type="string", property="prenom"),
-     *              @OA\Property ( type="string", property="dateDeNaissance",
-     *                             format="date")
+     *               @OA\Property(type="string", property="prenom"),
+     *               @OA\Property(type="string", property="nom"),
+     *               @OA\Property(type="string", property="dateDeNaissance", format="date"),
      *          )
      *      ),
      *      @OA\Response(
      *          response="200",
      *          description="Ajout de l'élève réussit",
      *          @OA\JsonContent(
-     *              @OA\Property (type="integer", property="id"),
-     *              @OA\Property (type="string", property="nom"),
-     *              @OA\Property (type="string", property="prenom"),
-     *              @OA\Property ( type="string", property="dateDeNaissance",
-     *                             format="date")
+     *              type="array",
+     *              @OA\Items(ref=@Model(type=Eleves::class, groups={"readEleve"}))
      *          )
      *      ),
      *      @OA\Response(
@@ -86,23 +80,13 @@ class EleveController extends AbstractController
      * )
      */
 
-    public function createEleve(Request $request, SerializerInterface $serializer, EntityManagerInterface $em,
-                                ValidatorInterface $validator)
+    public function createEleve(Request $request)
     {
-        $jsonRecu = $request->getContent();
+        $data = json_decode($request->getContent(), true);
 
-            $eleve = $serializer->deserialize($jsonRecu, Eleves::class, 'json');
+        $eleve = new Eleves();
 
-            $errors = $validator->validate($eleve);
-
-            if (count($errors) > 0){
-                return $this->json($errors, 400);
-            }
-
-            $em->persist($eleve);
-            $em->flush();
-
-            return $this->json($eleve, 201, [], ['groups' => 'eleve']);
+        return $this->saveEleve($eleve, $data);
 
     }
 
@@ -111,30 +95,19 @@ class EleveController extends AbstractController
      * * @OA\Put(
      *     tags={"Eleve"},
      *     summary="Editer un eleve",
-     *     @OA\Parameter (
-     *              name="id",
-     *              in="path",
-     *              description="L'id le l'élève correspondant",
-     *              @OA\Schema (type="integer"),
-     *          ),
      *     @OA\RequestBody(
      *          required=true,
      *          @OA\JsonContent(
-     *              required={"nom", "prenom"},
-     *              @OA\Property (type="string", property="nom"),
-     *              @OA\Property (type="string", property="prenom"),
-     *              @OA\Property (type="string", property="dateDeNaissance", format="date"),
-     *          )
+     *              type="array",
+     *              @OA\Items(title="contentEleve" , ref=@Model(type=Eleves::class, groups={"createEleve"}))
+     *          ),
      *      ),
      *     @OA\Response(
      *          response="200",
      *          description="Modification de l'élève réussit",
      *          @OA\JsonContent(
-     *              required={"nom", "prenom"},
-     *              @OA\Property (type="integer", property="id"),
-     *              @OA\Property (type="string", property="nom"),
-     *              @OA\Property (type="string", property="prenom"),
-     *              @OA\Property (type="string", property="dateDeNaissance", format="date"),
+     *              type="array",
+     *              @OA\Items(ref="#/components/schemas/Eleves2")
      *          )
      *      ),
      *      @OA\Response(
@@ -144,25 +117,18 @@ class EleveController extends AbstractController
      * )
      */
 
-    public function editEleve(int $id, Request $request, EntityManagerInterface $em){
+    public function editEleve(int $id, Request $request){
 
-        $data = json_decode($request->getContent(), true);
-        $request->request->replace(is_array($data) ? $data : array());
-
+        $em = $this->getDoctrine()->getManager();
         $eleve = $em->getRepository(Eleves::class)->find($id);
 
+        if (!$eleve) {
+            throw new ResourceNotFoundException("Resource $id not found");
+        }
 
-            if ($data['nom'] == "" || $data['prenom'] == "" || $data['dateDeNaissance'] == "")
-            {
-                return $this->json('Les champs ne doivent pas être vide', 400);
-            }
+        $data=json_decode($request->getContent(), true);
 
-            $eleve->setNom($data['nom']);
-            $eleve->setPrenom($data['prenom']);
-
-            $em->flush();
-
-            return $this->json($eleve, 201, [], ['groups' => 'eleve']);
+        return $this->saveEleve($eleve, $data[0]);
 
     }
 
@@ -171,12 +137,6 @@ class EleveController extends AbstractController
      * @OA\Delete(
      *     tags={"Eleve"},
      *     summary="Supprimer un eleve",
-     *     @OA\Parameter(
-     *          name="id",
-     *          in="path",
-     *          description="L'id de l'élève correspondant",
-     *          @OA\Property(type="integer"),
-     *      ),
      *     @OA\Response (response="200", description="La suppression de l'élève
      *                      a été faite avec succès",
      *
@@ -185,19 +145,20 @@ class EleveController extends AbstractController
      * )
      */
 
-    public function supprimerEleve(int $id, EntityManagerInterface $em){
+    public function supprimerEleve(int $id)
+    {
 
-            $eleve = $em->getRepository(Eleves::class)->find($id);
+        $em = $this->getDoctrine()->getManager();
+        $eleve = $em->getRepository(Eleves::class)->find($id);
 
-            if ($eleve == null)
-            {
-                return $this->json("Aucun élève ne possède l'id (" .$id.")" , 400);
-            }
+        if (!$eleve) {
+            throw new ResourceNotFoundException("Resource $id not found");
+        }
 
-            $em->remove($eleve);
-            $em->flush();
+        $em->remove($eleve);
+        $em->flush();
 
-            return $this->json("L'élève possèdant l'id ".$id." a été supprimé",
+        return $this->json("L'élève possèdant l'id ".$id." a été supprimé",
                 200, [], []);
 
     }
@@ -207,12 +168,6 @@ class EleveController extends AbstractController
      * @OA\Get(
      *     tags={"Eleve"},
      *     summary="Moyenne d'un élève",
-     *     @OA\Parameter(
-     *          name="id",
-     *          in="path",
-     *          description="L'id de l'élève correspondant",
-     *          @OA\Schema(type="integer"),
-     *      ),
      *      @OA\Response (
      *          response="200",
      *          description="Affichage de la moyenne de l'élève avec succès",
@@ -224,9 +179,35 @@ class EleveController extends AbstractController
      * )
      */
 
-    public function averageEleve(Eleves $eleve){
+    private function averageEleve(Eleves $eleve)
+    {
 
-        return $this->json(['average' => $eleve->getAverageNote()], 201, [], ['groups' => 'eleve']);
+        return $this->json(['average' => $eleve->getAverageNote()], 201, [], ['groups' => 'readEleve']);
+    }
+
+    private function saveEleve($eleve, $data)
+    {
+
+        $requestBody = $data;
+
+        $form = $this->createForm(ElevesType::class, $eleve);
+
+        $form->submit($requestBody);
+
+        if ($form->isSubmitted()) #error with $form->isValid()
+        {
+            $em = $this->getDoctrine()->getManager();
+
+            $em->persist($eleve);
+            $em->flush();
+
+            return $this->json($eleve, 201, [], ['groups' => 'readEleve']);
+
+        } else{
+            return $this->json('erreur', 201, []);
+
+        }
+
     }
 
 }

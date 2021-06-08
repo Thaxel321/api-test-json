@@ -19,7 +19,7 @@ class Eleves
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("eleve")
+     * @Groups({"readAllEleve", "readEleve"})
      * @OA\Property(type="integer", nullable=false)
      */
     private $id;
@@ -27,7 +27,7 @@ class Eleves
     /**
      * @var $nom string
      * @ORM\Column(type="string", length=255)
-     * @Groups("eleve")
+     * @Groups({"readAllEleve", "readEleve", "createEleve"})
      * @OA\Property(type="string", nullable=false)
      */
     private $nom;
@@ -35,7 +35,7 @@ class Eleves
     /**
      * @var $prenom string
      * @ORM\Column(type="string", length=255)
-     * @Groups("eleve")
+     * @Groups({"readAllEleve", "readEleve", "createEleve"})
      * @OA\Property(type="string", nullable=false)
      */
     private $prenom;
@@ -43,7 +43,7 @@ class Eleves
     /**
      * @var $dateDeNaissance  string
      * @ORM\Column(type="string", length=255)
-     * @Groups("eleve")
+     * @Groups({"readAllEleve", "readEleve", "createEleve"})
      * @OA\Property(type="string",format="date", nullable=false)
      */
     private $dateDeNaissance;
@@ -51,7 +51,7 @@ class Eleves
     /**
      * @var $notes ArrayCollection
      * @ORM\OneToMany(targetEntity=Notes::class, mappedBy="eleves", orphanRemoval=true)
-     * @Groups("eleve")
+     * @Groups("readAllEleve")
      */
     private $notes;
 
