@@ -194,7 +194,7 @@ class EleveController extends AbstractController
 
         $form->submit($requestBody);
 
-        if ($form->isSubmitted()) #error with $form->isValid()
+        if ($form->isSubmitted() && $form->isValid())
         {
             $em = $this->getDoctrine()->getManager();
 
